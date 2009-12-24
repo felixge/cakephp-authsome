@@ -124,12 +124,8 @@ class AuthsomeComponent extends Object{
 		);
 	}
 
-	public function hash() {
-		$args = func_get_args();
-		return call_user_func_array(
-			array('Authsome', __FUNCTION__),
-			$args
-		);
+	public function hash($password) {
+		return Authsome::hash($password);
 	}
 
 	private function __getUserModel() {

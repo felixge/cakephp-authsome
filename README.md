@@ -18,7 +18,7 @@ Copy the contents of this directory into plugins/authsome:
 Load authsome in your AppController and specify the name of your user model:
 
 	class AppController extends Controller {
-		var $components = array(
+		public $components = array(
 			'Authsome.Authsome' => array(
 				'model' => 'User'
 			)
@@ -241,6 +241,67 @@ Then deny access to any of the functionality mentioned above like this:
 			'action' => 'login',
 		))
 	}
+
+## Documentation
+
+### `AuthsomeComponent::initialize($controller, $settings)`
+
+Initializes the AuthsomeComponent with the given settings. This method is called for you when including Authsome in your AppController:
+
+	public $components = array(
+		'Authsome.Authsome' => array(
+			'model' => 'User'
+		)
+	);
+
+Available `$settings` and their defaults:
+
+	public $settings = array(
+		'model' => 'User',
+		// Those all default to $settings['model'] if not set explicitly
+		'configureKey' => null,
+		'sessionKey' => null,
+		'cookieKey' => null,
+	);
+
+### `AuthsomeComponent::get($field = null)`
+
+Returns the current user record. If `$field` is given, the records sub-field for the main model is extracted. The following two calls are identical:
+
+	$this->Authsome->get('id');
+	$this->Authsome->get('User.id');
+
+However, you could can also access any associations you may habe returned from your user models `authsomeLogin` function:
+
+	$this->Authsome->get('Role.name');
+
+### `AuthsomeComponent::login($type = 'credentials', $credentials = null)`
+
+Passes the given `$type` and `$credentials` to your user model `authsomeLogin` function. Returns false on failure, or the user record on success.
+
+If you skip the `$type` parameter, the default will be `'credentials'`. This means the following two calls are identical:
+
+	$user = $this->Authsome->login('credentials', $this->data);
+	$user = $this->Authsome->login($this->data);
+
+### `AuthsomeComponent::logout()`
+
+Destroys the current authsome session and also deletes any authsome cookies.
+
+### `AuthsomeComponent::persist($duration = '2 weeks')`
+
+Calls the user models `authsomePersist` function to get a login token and stores it in a cookie. `$duration` must be a relative time string that can be parsed by `strtotime()` and must not be an absolute date or timestamp.
+
+When performing a cookie login, authsome will automatically renew the login cookie for the given `$duration` again.
+
+### `AuthsomeComponent::hash($passwords)`
+
+Takes the given `$passwords` and returns the sha1 hash for it using core.php's `'Security.salt'` setting. The following two lines are identical:
+
+	$hashedPw = AuthsomeComponent::hash('foobar');
+	$hashedPw = Security::hash('foobar', 'sha1', true);
+
+This is a convenience function. It is not used by Authsome internally, you are free to use any password hashing schema you desire.
 
 ## Under the hood
 
