@@ -329,6 +329,6 @@ Authsome is licensed under the MIT license.
 
 ## Sponsors
 
-The initial development of Authsome was sponsored by [Three Leaf Creative].
+The initial development of Authsome was paid for by [ThreeLeaf Creative](http://threeleaf.tv/), the makers of a fantastic CakePHP CMS system.
 
 Authsome is developed by [Debuggable Ltd](http://debuggable.com/). Get in touch if you need help making your next project an authsome one!
