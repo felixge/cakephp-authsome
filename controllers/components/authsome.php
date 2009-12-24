@@ -1,4 +1,26 @@
 <?php
+/**
+ * Copyright (c) 2009 Debuggable Ltd (debuggable.com)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 // @todo
 // - Handle exceptions thrown from this component properly
 // - Restore user information when the active user changes his profile
@@ -198,36 +220,20 @@ class Authsome{
 		return $instance;
 	}
 
-	public static function get() {
-		$args = func_get_args();
-		return call_user_func_array(
-			array(self::instance(), __FUNCTION__),
-			$args
-		);
+	public static function get($field = null) {
+		return self::instance()->login($field);
 	}
 
-	public static function login() {
-		$args = func_get_args();
-		return call_user_func_array(
-			array(self::instance(), __FUNCTION__),
-			$args
-		);
+	public static function login($type = 'credentials', $credentials = null) {
+		return self::instance()->login($type, $credentials);
 	}
 
 	public static function logout() {
-		$args = func_get_args();
-		return call_user_func_array(
-			array(self::instance(), __FUNCTION__),
-			$args
-		);
+		return self::instance()->logout();
 	}
 
-	public static function persist() {
-		$args = func_get_args();
-		return call_user_func_array(
-			array(self::instance(), __FUNCTION__),
-			$args
-		);
+	public static function persist($duration = '2 weeks') {
+		return self::instance()->persist($duration);
 	}
 
 	public static function hash($password, $method = 'sha1', $salt = true) {
