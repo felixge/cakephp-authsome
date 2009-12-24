@@ -256,13 +256,11 @@ Initializes the AuthsomeComponent with the given settings. This method is called
 
 Available `$settings` and their defaults:
 
-	public $settings = array(
-		'model' => 'User',
-		// Those all default to $settings['model'] if not set explicitly
-		'configureKey' => null,
-		'sessionKey' => null,
-		'cookieKey' => null,
-	);
+	'model' => 'User',
+	// Those all default to $settings['model'] if not set explicitly
+	'configureKey' => null,
+	'sessionKey' => null,
+	'cookieKey' => null,
 
 ### AuthsomeComponent::get($field = null)
 
@@ -298,10 +296,22 @@ When performing a cookie login, authsome will automatically renew the login cook
 
 Takes the given `$passwords` and returns the sha1 hash for it using core.php's `'Security.salt'` setting. The following two lines are identical:
 
-	$hashedPw = AuthsomeComponent::hash('foobar');
+	$hashedPw = $this->Authsome->hash('foobar');
 	$hashedPw = Security::hash('foobar', 'sha1', true);
 
 This is a convenience function. It is not used by Authsome internally, you are free to use any password hashing schema you desire.
+
+### Static convenience functions
+
+The following static shortcuts exist for your convenience:
+
+	Authsome::get()
+	Authsome::login()
+	Authsome::logout()
+	Authsome::persist()
+	Authsome::hash()
+
+They are identical to calling the AuthsomeComponent in your controller, but allow you to access Authsome anywhere in your app (models, views, etc.). If you suffer from MVC OCD, do not use these functions.
 
 ## Under the hood
 
