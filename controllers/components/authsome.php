@@ -100,6 +100,7 @@ class AuthsomeComponent extends Object{
 	public function logout() {
 		Configure::write($this->settings['configureKey'], array());
 		$this->Session->write($this->settings['sessionKey'], array());
+		$this->Cookie->write($this->settings['cookieKey'], '');
 
 		return true;
 	}
@@ -217,7 +218,7 @@ class Authsome{
 	}
 
 	public static function get($field = null) {
-		return self::instance()->login($field);
+		return self::instance()->get($field);
 	}
 
 	public static function login($type = 'credentials', $credentials = null) {
