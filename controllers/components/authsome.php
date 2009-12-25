@@ -20,10 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-// @todo
-// - Handle exceptions thrown from this component properly
-// - Restore user information when the active user changes his profile
 class AuthsomeComponent extends Object{
 	public $components = array(
 		'Session',
@@ -57,7 +53,7 @@ class AuthsomeComponent extends Object{
 	public function get($field = null) {
 		$user = $this->__getActiveUser();
 
-		if (empty($field) || is_null($user)) {
+		if (empty($field)) {
 			return $user;
 		}
 
