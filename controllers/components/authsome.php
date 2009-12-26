@@ -84,10 +84,6 @@ class AuthsomeComponent extends Object{
 
 		$user = $userModel->authsomeLogin($type, $credentials);
 
-		if ($user === false) {
-			return false;
-		}
-
 		Configure::write($this->settings['configureKey'], $user);
 		$this->Session->write($this->settings['sessionKey'], $user);
 		return $user;
@@ -146,7 +142,7 @@ class AuthsomeComponent extends Object{
 		$this->__useGuestAccount();
 
 		$user = Configure::read($this->settings['configureKey']);
-		if (!$user) {
+		if (is_null($user)) {
 			throw new Exception(
 				'Unable to initilize user'
 			);

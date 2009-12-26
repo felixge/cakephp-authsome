@@ -25,16 +25,15 @@ Load authsome in your AppController and specify the name of your user model:
 		);
 	}
 
-Implement authsomeLogin in your user model. For a minimal setup you just need to be able to return a guest user array or lookup a user using some sort of credentials.
+Implement authsomeLogin in your user model (must return a non-null value):
 
 	class User extends AppModel{
 		public function authsomeLogin($type, $credentials = array()) {
 			switch ($type) {
 				case 'guest':
-					// You could also create a guest user here if it doesn't 
-					// exist, or simply return a hard coded user array.
-					$conditions = array('User.id' => YOUR_GUEST_ID);
-					break;
+					// You can return any non-null value here, if you don't
+					// have a guest account, just return an empty array
+					return array('it' => 'works');
 				case 'credentials':
 					$password = Authsome::hash($credentials['password']);
 
@@ -45,19 +44,19 @@ Implement authsomeLogin in your user model. For a minimal setup you just need to
 					);
 					break;
 				default:
-					return false;
+					return null;
 			}
 
 			return $this->find('first', compact('conditions'));
 		}
 	}
 
-Almost done! Check if you did everything right so far by verifying that you can access the guest account information anywhere in your app:
+Almost done! Check if you did everything right so far by putting this in one of your controllers:
 
 	$guest = Authsome::get();
 	debug($guest);
 
-If this returns your guest account as configured in your `authsomeLogin` login function, you can go ahead and implement a simple login function:
+If this returns `Array([it] => works)`, you can go ahead and implement a simple login function:
 
 	class UsersController extends AppController{
 		public function login() {
@@ -166,10 +165,9 @@ If so, proceed to the next step and add the `'cookie'` login `$type` to your aut
 	public function authsomeLogin($type, $credentials = array()) {
 		switch ($type) {
 			case 'guest':
-				// You could also create a guest user here if it doesn't
-				// exist, or simply return a hard coded user array.
-				$conditions = array('User.id' => YOUR_GUEST_ID);
-				break;
+				// You can return any non-null value here, if you don't
+				// have a guest account, just return an empty array
+				return array('it' => 'works');
 			case 'credentials':
 				$password = Authsome::hash($credentials['password']);
 
@@ -206,7 +204,7 @@ If so, proceed to the next step and add the `'cookie'` login `$type` to your aut
 				);
 				break;
 			default:
-				return false;
+				return null;
 		}
 
 		return $this->find('first', compact('conditions'));
