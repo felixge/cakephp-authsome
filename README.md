@@ -143,6 +143,8 @@ Don't forget to create an empty model in app/models/login_token.php for this:
 
 Next you'll need to implement `authsomePersist` in your user model, which creates and stores a unique login token when `Authsome::persist()` is called:
 
+	public $hasMany = array('LoginToken');
+
 	public function authsomePersist($user, $duration) {
 		$token = md5(uniqid(mt_rand(), true));
 		$userId = $user['User']['id'];
