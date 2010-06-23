@@ -1,6 +1,6 @@
 # Auth for people who hate the Auth component
 
-Authsome is a CakePHP 1.2 plugin that makes authentication a pleasure to work with by following a few simple rules:
+Authsome is a CakePHP 1.2 / 1.3 plugin that makes authentication a pleasure to work with by following a few simple rules:
 
 **Assume nothing:** Authsome requires that you have some kind of user model, but that's it. It doesn't care if you use a database, passwords or religious ceremonies for verifying your member logins.
 
