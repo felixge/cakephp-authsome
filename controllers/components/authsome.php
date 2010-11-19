@@ -163,7 +163,7 @@ class AuthsomeComponent extends Object{
 
 	private function __useCookieToken() {
 		$token = $this->Cookie->read($this->settings['cookieKey']);
-		if (!$token) {
+		if (!$token || !is_string($token)) {
 			return false;
 		}
 
