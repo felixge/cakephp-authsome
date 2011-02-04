@@ -92,9 +92,10 @@ class AuthsomeComponent extends Object{
 	public function logout() {
 		Configure::write($this->settings['configureKey'], array());
 		$this->Session->write($this->settings['sessionKey'], array());
-		if (!empty($this->settings['cookieKey'])) {
-			$this->Cookie->write($this->settings['cookieKey'], '');
+		if (empty($this->settings['cookieKey'])) {
+			return true;
 		}
+		$this->Cookie->write($this->settings['cookieKey'], '');
 		return true;
 	}
 
@@ -109,15 +110,15 @@ class AuthsomeComponent extends Object{
 
 		$token = $userModel->authsomePersist(Authsome::get(), $duration);
 		$token = $token.':'.$duration;
-		if (!empty($this->settings['cookieKey'])) {
-			return $this->Cookie->write(
-				$this->settings['cookieKey'],
-				$token,
-				true, // encrypt = true
-				$duration
-				);
+		if (empty($this->settings['cookieKey'])) {
+			return false;
 		}
-		return false;
+		return $this->Cookie->write(
+			$this->settings['cookieKey'],
+			$token,
+			true, // encrypt = true
+			$duration
+			);
 	}
 
 	public function hash($password) {
