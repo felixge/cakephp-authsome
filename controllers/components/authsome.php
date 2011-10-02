@@ -109,10 +109,10 @@ class AuthsomeComponent extends Object{
 		}
 
 		foreach ($fields as $field) {
-			if (strstr($field, '.') === false) {
-				unset($user[$this->settings['model']][$field]);
-			} else {
+			if (strstr($field, '.') !== false) {
 				$user = Set::remove($user, $field, $value);
+			} else if (isset($user[$this->settings['model']][$field])) {
+				unset($user[$this->settings['model']][$field]);
 			}
 		}
 
