@@ -67,24 +67,57 @@ class AuthsomeComponent extends Object{
 		return Set::extract($user, $field);
 	}
 
-	public function set($field = null, $value = null) {
-		if ($field === null) {
+	public function set($fields = null, $value = null) {
+		if ($fields === null) {
 			return false;
+		}
+
+		if (!is_array($fields)) {
+			$fields = array($fields => $value);
+		}
+
+		$user = $this->Session->read($this->settings['sessionKey']);
+		if (empty($user)) {
+			$user = array();
+		}
+
+		foreach ($fields as $field => $value) {
+			if (strstr($field, '.') === false) {
+				$user[$this->settings['model']][$field] = $value;
+			} else {
+				$user = Set::insert($user, $field, $value);
+			}
+		}
+
+		$this->Session->write($this->settings['sessionKey'], $user);
+		Configure::write($this->settings['sessionKey'], $user);
+		return true;
+	}
+
+	public function delete($fields = null) {
+		if ($fields === null) {
+			return false;
+		}
+
+		if (!is_array($fields)) {
+			$fields = (array) $fields;
 		}
 
 		$user = $this->Session->read($this->settings['sessionKey']);
 		if (!$user) {
-			return false;
+			return true;
 		}
 
-		if (is_array($field)) {
-			$userFields = array_merge($user[$this->settings['model']], $fields);
-			$this->Session->write($this->settings['sessionKey'] . '.' . $this->settings['model'], $userFields);
-			Configure::write($this->settings['sessionKey'] . '.' . $this->settings['model'], $userFields);
-		} else {
-			$this->Session->write($this->settings['sessionKey'] . '.' . $this->settings['model'] . '.' . $field, $value);
-			Configure::write($this->settings['sessionKey'] . '.' . $this->settings['model'] . '.' . $field, $value);
+		foreach ($fields as $field) {
+			if (strstr($field, '.') === false) {
+				unset($user[$this->settings['model']][$field]);
+			} else {
+				$user = Set::remove($user, $field, $value);
+			}
 		}
+
+		$this->Session->write($this->settings['sessionKey'], $user);
+		Configure::write($this->settings['sessionKey'], $user);
 		return true;
 	}
 
@@ -244,6 +277,10 @@ class Authsome{
 
 	public static function set($field = null, $value = null) {
 		return self::instance()->set($field, $value);
+	}
+
+	public static function delete($field = null, $value = null) {
+		return self::instance()->delete($field, $value);
 	}
 
 	public static function login($type = 'credentials', $credentials = null) {
