@@ -67,6 +67,27 @@ class AuthsomeComponent extends Object{
 		return Set::extract($user, $field);
 	}
 
+	public function set($field = null, $value = null) {
+		if ($field === null) {
+			return false;
+		}
+
+		$user = $this->Session->read($this->settings['sessionKey']);
+		if (!$user) {
+			return false;
+		}
+
+		if (is_array($field)) {
+			$userFields = array_merge($user[$this->settings['model']], $fields);
+			$this->Session->write($this->settings['sessionKey'] . '.' . $this->settings['model'], $userFields);
+			Configure::write($this->settings['sessionKey'] . '.' . $this->settings['model'], $userFields);
+		} else {
+			$this->Session->write($this->settings['sessionKey'] . '.' . $this->settings['model'] . '.' . $field, $value);
+			Configure::write($this->settings['sessionKey'] . '.' . $this->settings['model'] . '.' . $field, $value);
+		}
+		return true;
+	}
+
 	public function login($type = 'credentials', $credentials = null) {
 		$userModel = $this->__getUserModel();
 
@@ -219,6 +240,10 @@ class Authsome{
 
 	public static function get($field = null) {
 		return self::instance()->get($field);
+	}
+
+	public static function set($field = null, $value = null) {
+		return self::instance()->set($field, $value);
 	}
 
 	public static function login($type = 'credentials', $credentials = null) {
