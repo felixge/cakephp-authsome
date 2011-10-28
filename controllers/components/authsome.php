@@ -67,6 +67,60 @@ class AuthsomeComponent extends Object{
 		return Set::extract($user, $field);
 	}
 
+	public function set($fields = null, $value = null) {
+		if ($fields === null) {
+			return false;
+		}
+
+		if (!is_array($fields)) {
+			$fields = array($fields => $value);
+		}
+
+		$user = $this->Session->read($this->settings['sessionKey']);
+		if (empty($user)) {
+			$user = array();
+		}
+
+		foreach ($fields as $field => $value) {
+			if (strstr($field, '.') === false) {
+				$user[$this->settings['model']][$field] = $value;
+			} else {
+				$user = Set::insert($user, $field, $value);
+			}
+		}
+
+		$this->Session->write($this->settings['sessionKey'], $user);
+		Configure::write($this->settings['sessionKey'], $user);
+		return true;
+	}
+
+	public function delete($fields = null) {
+		if ($fields === null) {
+			return false;
+		}
+
+		if (!is_array($fields)) {
+			$fields = (array) $fields;
+		}
+
+		$user = $this->Session->read($this->settings['sessionKey']);
+		if (!$user) {
+			return true;
+		}
+
+		foreach ($fields as $field) {
+			if (strstr($field, '.') !== false) {
+				$user = Set::remove($user, $field, $value);
+			} else if (isset($user[$this->settings['model']][$field])) {
+				unset($user[$this->settings['model']][$field]);
+			}
+		}
+
+		$this->Session->write($this->settings['sessionKey'], $user);
+		Configure::write($this->settings['sessionKey'], $user);
+		return true;
+	}
+
 	public function login($type = 'credentials', $credentials = null) {
 		$userModel = $this->__getUserModel();
 
@@ -219,6 +273,14 @@ class Authsome{
 
 	public static function get($field = null) {
 		return self::instance()->get($field);
+	}
+
+	public static function set($field = null, $value = null) {
+		return self::instance()->set($field, $value);
+	}
+
+	public static function delete($field = null, $value = null) {
+		return self::instance()->delete($field, $value);
 	}
 
 	public static function login($type = 'credentials', $credentials = null) {
