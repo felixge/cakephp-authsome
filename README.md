@@ -36,12 +36,19 @@ In your app directory type:
 	git submodule init
 	git submodule update
 
-
 _[GIT Clone]_
 
 In your plugin directory type
 
 	git clone git://github.com/felixge/cakephp-authsome.git Authsome
+
+### Enable plugin
+
+In 2.0 you need to enable the plugin your `app/Config/bootstrap.php` file:
+
+	CakePlugin::load('Authsome');
+
+If you are already using `CakePlugin::loadAll();`, then this is not necessary.
 
 ## Usage
 
