@@ -1,17 +1,17 @@
 <?php
 /**
  * Copyright (c) 2009 Debuggable Ltd (debuggable.com)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-class AuthsomeComponent extends Object{
+
+App::uses('CookieComponent', 'Controller/Component');
+App::uses('RequestHandlerComponent', 'Controller/Component');
+App::uses('SessionComponent', 'Controller/Component');
+App::uses('Configure', 'Core');
+App::uses('Security', 'Utility');
+App::uses('Set', 'Utility');
+
+class AuthsomeComponent extends Component {
+
 	public $components = array(
 		'Session',
 		'Cookie',
@@ -36,18 +45,25 @@ class AuthsomeComponent extends Object{
 
 	private $__userModel;
 
-	public function initialize($controller, $settings = array()) {
+/**
+ * Constructor.
+ *
+ * @param ComponentCollection $collection
+ * @param array $settings
+ */
+	public function initialize($Controller) {
 		Authsome::instance($this);
-		$this->settings = Set::merge($this->settings, $settings);
 
 		// Use the model name as the key everywhere by default
 		$keys = array('configure', 'session', 'cookie');
 		foreach ($keys as $prefix) {
 			$key = $prefix.'Key';
-			if ($this->settings[$key]===null) {
+			if ($this->settings[$key] === null) {
 				$this->settings[$key] = $this->settings['model'];
 			}
 		}
+
+		parent::initialize($Controller);
 	}
 
 	public function get($field = null) {
@@ -251,6 +267,7 @@ class AuthsomeComponent extends Object{
 	private function __useGuestAccount() {
 		return $this->login('guest');
 	}
+
 }
 
 // Static Authsomeness
@@ -298,5 +315,5 @@ class Authsome{
 	public static function hash($password, $method = 'sha1', $salt = true) {
 		return Security::hash($password, $method, $salt);
 	}
+
 }
-?>

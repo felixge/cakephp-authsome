@@ -1,6 +1,10 @@
-# Auth for people who hate the Auth component
+# Authsome Plugin
 
-Authsome is a CakePHP 1.2 / 1.3 plugin that makes authentication a pleasure to work with by following a few simple rules:
+Auth for people who hate the Auth component
+
+## Background
+
+Authsome is a CakePHP 2.x plugin that makes authentication a pleasure to work with by following a few simple rules:
 
 **Assume nothing:** Authsome requires that you have some kind of user model, but that's it. It doesn't care if you use a database, passwords or religious ceremonies for verifying your member logins.
 
@@ -8,14 +12,47 @@ Authsome is a CakePHP 1.2 / 1.3 plugin that makes authentication a pleasure to w
 
 **Always available:** Authsome is there for you when you need it. You can do stuff like `Authsome::get('id')` from anywhere in your project. If you have MVC OCD, you can also use Authsome as a regular component: `$this->Authsome->get('id')`
 
+## Requirements
+
+* PHP 5.2.8+
+* CakePHP 2.x
+
 ## Installation
 
-Copy the contents of this directory into plugins/authsome:
+For 1.3 support, please see the [1.3 branch](https://github.com/felixge/cakephp-authsome/tree/1.3);
 
-	cd my_cake_app
-	git clone git://github.com/felixge/cakephp-authsome.git plugins/authsome
+_[Manual]_
 
-Load authsome in your AppController and specify the name of your user model:
+* Download this: [https://github.com/felixge/cakephp-authsome/zipball/master](https://github.com/felixge/cakephp-authsome/zipball/master)
+* Unzip that download.
+* Copy the resulting folder to `app/Plugin`
+* Rename the folder you just copied to `Authsome`
+
+_[GIT Submodule]_
+
+In your app directory type:
+
+	git submodule add git://github.com/felixge/cakephp-authsome.git Plugin/Authsome
+	git submodule init
+	git submodule update
+
+_[GIT Clone]_
+
+In your plugin directory type
+
+	git clone git://github.com/felixge/cakephp-authsome.git Authsome
+
+### Enable plugin
+
+In 2.0 you need to enable the plugin your `app/Config/bootstrap.php` file:
+
+	CakePlugin::load('Authsome');
+
+If you are already using `CakePlugin::loadAll();`, then this is not necessary.
+
+## Usage
+
+Once installed, load authsome in your AppController and specify the name of your user model:
 
 	class AppController extends Controller {
 		public $components = array(
@@ -90,7 +127,7 @@ And add a app/views/users/login.ctp file like this:
 
 The array passed into `Authsome::login()` gets passed directly to your `authsomeLogin` function, so you really pass any kind of credentials. You can even come up with your own authentication types by doing `Authsome::login('voodoo_auth', $chickenBones)`.
 
-## Cookies
+### Cookies
 
 Any login created by `Authsome::login()` will only last as long as your CakePHP session itself. However, you might want to offer one of those nifty "Remember me for 2 weeks" buttons. `Authsome::persist()` comes to rescue!
 
@@ -121,9 +158,7 @@ Also add a checkbox like this to your form:
 		'type' => "checkbox"
 	));
 
-Authsome itself does not care how you manage your cookie login tokens for auth persistence, but I highly recommend following [Charles' Receipe][1] for this. Charles recommends to create a table that maps `user_id`s and login tokens, here is what I use:
-
-[1]: http://fishbowl.pastiche.org/2004/01/19/persistent_login_cookie_best_practice/
+Authsome itself does not care how you manage your cookie login tokens for auth persistence, but I highly recommend following [Charles' Receipe](http://fishbowl.pastiche.org/2004/01/19/persistent_login_cookie_best_practice/) for this. Charles recommends to create a table that maps `user_id`s and login tokens, here is what I use:
 
 	CREATE TABLE `login_tokens` (
 	  `id` int(11) NOT NULL auto_increment,
@@ -242,7 +277,17 @@ Then deny access to any of the functionality mentioned above like this:
 		))
 	}
 
-## Documentation
+## Under the hood
+
+Authsome builds on a fairly simple logic. The first time you call `Authsome::get()`, it tries to find out who the active user it. This is done as follows:
+
+1. Check if Configure::read($this->settings['configureKey']) for a user record
+2. Check $this->Session->read($this->settings['sessionKey']) for a user record
+3. Check $this->Cookie->read($this->settings['cookieKey']) for a token
+
+If all 3 of those checks do not produce a valid user record, authsome calls the user models `authsomeLogin('guest')` function and takes the record returned from that. If even that fails, authsome will throw an exception and bring your app to a crashing halt.
+
+## Options
 
 ### AuthsomeComponent::initialize($controller, $settings)
 
@@ -313,22 +358,30 @@ The following static shortcuts exist for your convenience:
 
 They are identical to calling the AuthsomeComponent in your controller, but allow you to access Authsome anywhere in your app (models, views, etc.). If you suffer from MVC OCD, do not use these functions.
 
-## Under the hood
-
-Authsome builds on a fairly simple logic. The first time you call `Authsome::get()`, it tries to find out who the active user it. This is done as follows:
-
-1. Check if Configure::read($this->settings['configureKey']) for a user record
-2. Check $this->Session->read($this->settings['sessionKey']) for a user record
-3. Check $this->Cookie->read($this->settings['cookieKey']) for a token
-
-If all 3 of those checks do not produce a valid user record, authsome calls the user models `authsomeLogin('guest')` function and takes the record returned from that. If even that fails, authsome will throw an exception and bring your app to a crashing halt.
-
-## License
-
-Authsome is licensed under the MIT license.
-
 ## Sponsors
 
 The initial development of Authsome was paid for by [ThreeLeaf Creative](http://threeleaf.tv/), the makers of a fantastic CakePHP CMS system.
 
 Authsome is developed by [Debuggable Ltd](http://debuggable.com/). Get in touch if you need help making your next project an authsome one!
+
+## License
+
+Copyright (c) 2009-2012 Felix Geisendörfer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
