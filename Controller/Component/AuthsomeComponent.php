@@ -55,10 +55,9 @@ class AuthsomeComponent extends Component {
 		Authsome::instance($this);
 
 		// Use the model name as the key everywhere by default
-		$keys = array('configure', 'session', 'cookie');
-		foreach ($keys as $prefix) {
-			$key = $prefix.'Key';
-			if ($this->settings[$key] === null) {
+		$keys = array('configureKey', 'sessionKey', 'cookieKey');
+		foreach ($keys as $key) {
+			if (empty($this->settings[$key])) {
 				$this->settings[$key] = $this->settings['model'];
 			}
 		}
