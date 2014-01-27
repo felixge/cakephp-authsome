@@ -62,7 +62,7 @@ class AuthsomeComponent extends Component {
 			}
 		}
 
-		parent::initialize($Controller);
+		parent::initialize($controller);
 	}
 
 	public function get($field = null) {
