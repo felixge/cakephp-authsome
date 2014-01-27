@@ -51,7 +51,7 @@ class AuthsomeComponent extends Component {
  * @param ComponentCollection $collection
  * @param array $settings
  */
-	public function initialize($Controller) {
+	public function initialize(Controller $controller) {
 		Authsome::instance($this);
 
 		// Use the model name as the key everywhere by default
